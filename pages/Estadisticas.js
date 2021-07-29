@@ -1,6 +1,6 @@
 import { Bar,Pie, Line } from 'react-chartjs-2';
 import Modal from '@material-ui/core/Modal';
-import {auth,db} from "../BD/conf";
+import {authSecondary,db, dbSecondary} from "../BD/conf";
 import {useState, useEffect} from 'react';
 import ButtonEstad from './Components/ButtonEstad';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
@@ -40,6 +40,7 @@ export default function Estadisticas(){
     const[cantidadE, setcantidadE]= useState([])
     const[descripcionEA, setdescripcionEA]= useState([])
     const[cantidadEA, setcantidadEA]= useState([])
+    const [check, setCheck]= useState(false)
 
     const documentos=[] 
    const fecha= new Date()
@@ -48,10 +49,13 @@ export default function Estadisticas(){
  var [mesTotal, setmesTotal]=useState([])
    const ano= fecha.getFullYear() + ''
    useEffect(()=>{
-    auth.onAuthStateChanged(async (user) => {
-        if(user != null){
-            meses.forEach(mes=>{
-                db.collection('Usuario').doc(user.uid).collection('VentasMes').doc(ano).collection(mes).onSnapshot(Snapshot=>{
+    authSecondary.onAuthStateChanged(async user=>{
+      if (user != null){
+          await dbSecondary.collection("Usuario").doc(user.uid).get().then(async dato=>{
+            if(dato.exists){
+                setCheck(dato.data().checkEstadistica)
+              meses.forEach(mes=>{
+                db.collection('Usuario').doc(dato.data().Empresa_ID).collection('VentasMes').doc(ano).collection(mes).onSnapshot(Snapshot=>{
                     let total=0
                     Snapshot.forEach(datoG=>{
                         datoG.data().productosCliente.forEach(d=>{
@@ -62,82 +66,85 @@ export default function Estadisticas(){
                 })
 
             })
-        }
-    })
-    setmesTotal(totalMes)
-
-   },[])
-
-     useEffect(()=>{
-    auth.onAuthStateChanged(async (user) => {
-        if(user != null){
-           
-            
-    
-         await  db.collection('Usuario').doc(user.uid).collection('Producto').orderBy("salidaProducto", "desc").get().then(data=>{
-             
-            data.forEach(dataInforme=>{
-                
-                documentos.push({...dataInforme.data()})
-              })
-              setdatosInforme(documentos)
-              if (documentos.length >= 10)
-
-              {
-                
-                setproductosMasV({ 
-                descripcionP1:documentos[0].descripcionProducto,
-                cantidadVP1:documentos[0].salidaProducto,
-                descripcionP2:documentos[1].descripcionProducto,
-                cantidadVP2:documentos[1].salidaProducto,
-                descripcionP3:documentos[2].descripcionProducto,
-                cantidadVP3:documentos[2].salidaProducto,
-                descripcionP4:documentos[3].descripcionProducto,
-                cantidadVP4:documentos[3].salidaProducto,
-                descripcionP5:documentos[4].descripcionProducto,
-                cantidadVP5:documentos[4].salidaProducto,
-                })
-                const n = documentos.length;
-            setproductosMenosV({ 
-                descripcionPM1:documentos[n-1].descripcionProducto,
-                cantidadVPM1:documentos[n-1].salidaProducto,
-                descripcionPM2:documentos[n-2].descripcionProducto,
-                cantidadVPM2:documentos[n-2].salidaProducto,
-                descripcionPM3:documentos[n-3].descripcionProducto,
-                cantidadVPM3:documentos[n-3].salidaProducto,
-                descripcionPM4:documentos[n-4].descripcionProducto,
-                cantidadVPM4:documentos[n-4].salidaProducto,
-                descripcionPM5:documentos[n-5].descripcionProducto,
-                cantidadVPM5:documentos[n-5].salidaProducto,
-            })
-            let cantidadExistencia=[]
-            let descripcionExistencia=[]
-            let descripcionEAgotados=[]
-            let cantidadEAgotados =[]
-            documentos.map(doc=>{
-                descripcionExistencia.push(doc.descripcionProducto)
-                cantidadExistencia.push(doc.existenciaProducto)
-                
-                if(doc.existenciaProducto <= 25){
-                    descripcionEAgotados.push(doc.descripcionProducto)
-                    cantidadEAgotados.push(doc.existenciaProducto)
-                }
-            })
-            setdescripcionE(descripcionExistencia)
-            setcantidadE(cantidadExistencia)
-            setdescripcionEA(descripcionEAgotados)
-            setcantidadEA(cantidadEAgotados)
-
-               
+            setmesTotal(totalMes)
             }
-           
-         
-            }) 
+          })
+      }
+    })
+  },[])
 
-        }
-         })
+  useEffect(()=>{
+    authSecondary.onAuthStateChanged(async user=>{
+      if (user != null){
+          await dbSecondary.collection("Usuario").doc(user.uid).get().then(async dato=>{
+            if(dato.exists){
+              
+              await  db.collection('Usuario').doc(dato.data().Empresa_ID).collection('Producto').orderBy("salidaProducto", "desc").get().then(data=>{
+             
+                data.forEach(dataInforme=>{
+                    
+                    documentos.push({...dataInforme.data()})
+                  })
+                  setdatosInforme(documentos)
+                  if (documentos.length >= 10)
     
-    },  [])
+                  {
+                    
+                    setproductosMasV({ 
+                    descripcionP1:documentos[0].descripcionProducto,
+                    cantidadVP1:documentos[0].salidaProducto,
+                    descripcionP2:documentos[1].descripcionProducto,
+                    cantidadVP2:documentos[1].salidaProducto,
+                    descripcionP3:documentos[2].descripcionProducto,
+                    cantidadVP3:documentos[2].salidaProducto,
+                    descripcionP4:documentos[3].descripcionProducto,
+                    cantidadVP4:documentos[3].salidaProducto,
+                    descripcionP5:documentos[4].descripcionProducto,
+                    cantidadVP5:documentos[4].salidaProducto,
+                    })
+                    const n = documentos.length;
+                setproductosMenosV({ 
+                    descripcionPM1:documentos[n-1].descripcionProducto,
+                    cantidadVPM1:documentos[n-1].salidaProducto,
+                    descripcionPM2:documentos[n-2].descripcionProducto,
+                    cantidadVPM2:documentos[n-2].salidaProducto,
+                    descripcionPM3:documentos[n-3].descripcionProducto,
+                    cantidadVPM3:documentos[n-3].salidaProducto,
+                    descripcionPM4:documentos[n-4].descripcionProducto,
+                    cantidadVPM4:documentos[n-4].salidaProducto,
+                    descripcionPM5:documentos[n-5].descripcionProducto,
+                    cantidadVPM5:documentos[n-5].salidaProducto,
+                })
+                let cantidadExistencia=[]
+                let descripcionExistencia=[]
+                let descripcionEAgotados=[]
+                let cantidadEAgotados =[]
+                documentos.map(doc=>{
+                    descripcionExistencia.push(doc.descripcionProducto)
+                    cantidadExistencia.push(doc.existenciaProducto)
+                    
+                    if(doc.existenciaProducto <= 25){
+                        descripcionEAgotados.push(doc.descripcionProducto)
+                        cantidadEAgotados.push(doc.existenciaProducto)
+                    }
+                })
+                setdescripcionE(descripcionExistencia)
+                setcantidadE(cantidadExistencia)
+                setdescripcionEA(descripcionEAgotados)
+                setcantidadEA(cantidadEAgotados)
+    
+                   
+                }
+               
+             
+                }) 
+    
+            }
+          })
+      }
+    })
+  },[])
+
    
     const data1={
         labels:[productosMasV.descripcionP1, productosMasV.descripcionP2,productosMasV.descripcionP3,productosMasV.descripcionP4,productosMasV.descripcionP5],
@@ -252,27 +259,28 @@ export default function Estadisticas(){
       
       <h1 className="title-estadistica" >Estadisticas</h1>
     
-    { datosInforme.length >= 10 ?<>
-        <div className="button-estadisticas">
-            <div>
-                <ButtonEstad color="verde" Icon={<TrendingUpIcon/>} click={()=> setOpen(true)}title="Productos mas vendidos" descripcion="Estadistica de los productos que mas a vendido"  />
-            </div>
-            <div>
-                <ButtonEstad color="red" Icon={<CallReceivedIcon />} click={()=> setOpen1(true)}title="Productos menos Vendidos" descripcion="Estadistica de los productos que menos a vendido"  />
-            </div>
-            <div>
-                <ButtonEstad color="amarillo" Icon={<DomainIcon/>} click={()=> setOpen2(true)}title="Existencia de Productos (Unidades)" descripcion="Estadistica de la existencia por productos"  />
-            </div>
-            <div>
-                <ButtonEstad color="color3" Icon={<AttachMoneyIcon/>} click={()=> setOpen4(true)}title="Ganancias Mensuales $" descripcion="Estadistica de las ganacias mensuales de tu negocio"  />
-            </div>
-            <div>
-                <ButtonEstad color="color4" Icon={<WarningIcon/>} click={()=> setOpen3(true)}title="Productos Agotados " descripcion="Los productos con menos de 25 existencia "  />
-            </div>
-        </div>
-  
-    
-      </>:<h1 className="title-estadistica" >NO HAY SUFICIENTES PRODUCTOS REGISTRADOS PARA GENERAR UN INFORME</h1>
+    { datosInforme.length >= 10 ?
+        check === true?
+            <>
+                <div className="button-estadisticas">
+                    <div>
+                        <ButtonEstad color="verde" Icon={<TrendingUpIcon/>} click={()=> setOpen(true)}title="Productos mas vendidos" descripcion="Estadistica de los productos que mas a vendido"  />
+                    </div>
+                    <div>
+                        <ButtonEstad color="red" Icon={<CallReceivedIcon />} click={()=> setOpen1(true)}title="Productos menos Vendidos" descripcion="Estadistica de los productos que menos a vendido"  />
+                    </div>
+                    <div>
+                        <ButtonEstad color="amarillo" Icon={<DomainIcon/>} click={()=> setOpen2(true)}title="Existencia de Productos (Unidades)" descripcion="Estadistica de la existencia por productos"  />
+                    </div>
+                    <div>
+                        <ButtonEstad color="color3" Icon={<AttachMoneyIcon/>} click={()=> setOpen4(true)}title="Ganancias Mensuales $" descripcion="Estadistica de las ganacias mensuales de tu negocio"  />
+                    </div>
+                    <div>
+                        <ButtonEstad color="color4" Icon={<WarningIcon/>} click={()=> setOpen3(true)}title="Productos Agotados " descripcion="Los productos con menos de 25 existencia "  />
+                    </div>
+                </div>
+                </>:<h1>Aqui va el restrigido</h1>
+        :<h1 className="title-estadistica" >NO HAY SUFICIENTES PRODUCTOS REGISTRADOS PARA GENERAR UN INFORME</h1>
     }
             <Modal
                 open={open}

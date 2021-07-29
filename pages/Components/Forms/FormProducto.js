@@ -1,6 +1,6 @@
 import Button from '@material-ui/core/Button';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
-import {db,auth} from '../../../BD/conf';
+import {db,authSecondary, dbSecondary} from '../../../BD/conf';
 import Link from "next/link";
 import EditIcon from '@material-ui/icons/Edit';
 import {useState, useEffect} from 'react';
@@ -11,31 +11,40 @@ export default function FormProducto(props){
     const CampoVacio = ()=>{swal("No se admiten campos Vacios", "No se permite dejar campos vacios", "info") }
   const [getCategoria, setGetCategoria] = useState([]);
   const getDataProveedor = () => {
-    auth.onAuthStateChanged(async (user) => {
-      if(user != null){
-        db.collection('Usuario').doc(user.uid).collection('Proveedor').onSnapshot((querySnapshot) => {
-          const docs = [];
-          querySnapshot.forEach((doc) => {
-            docs.push(doc.data());
-          });
-          setGetProveedor(docs);
-        });
+    authSecondary.onAuthStateChanged(async user=>{
+      if (user != null){
+          await dbSecondary.collection("Usuario").doc(user.uid).get().then(async dato=>{
+            if(dato.exists){
+              db.collection('Usuario').doc(dato.data().Empresa_ID).collection('Proveedor').onSnapshot((querySnapshot) => {
+              const docs = [];
+              querySnapshot.forEach((doc) => {
+                docs.push(doc.data());
+              });
+              setGetProveedor(docs);
+            });
+            }
+          })
       }
-    });
+    })
   };
 
+ 
   const getDataCategoria = () => {
-    auth.onAuthStateChanged(async (user) => {
-      if(user != null){
-        db.collection('Usuario').doc(user.uid).collection('Categoria').onSnapshot((querySnapshot) => {
-          const docs = [];
-          querySnapshot.forEach((doc) => {
-            docs.push(doc.data());
-          });
-          setGetCategoria(docs);
-        });
+       authSecondary.onAuthStateChanged(async user=>{
+      if (user != null){
+          await dbSecondary.collection("Usuario").doc(user.uid).get().then(async dato=>{
+            if(dato.exists){
+              db.collection('Usuario').doc(dato.data().Empresa_ID).collection('Categoria').onSnapshot((querySnapshot) => {
+                const docs = [];
+                querySnapshot.forEach((doc) => {
+                  docs.push(doc.data());
+                });
+                setGetCategoria(docs);
+              });
+            }
+          })
       }
-    });
+    })
   };
 
   useState(() => {
@@ -69,21 +78,25 @@ export default function FormProducto(props){
     
        }
    const [dataProducto, setdataProducto]=useState([])
-   useEffect(()=>{
-    auth.onAuthStateChanged(user=>{
-        if (user!=null){
-            db.collection('Usuario').doc(user.uid).collection('Producto').onSnapshot(querySnapshot=>{
-                const docs=[]
-                querySnapshot.forEach(doc=>{
-                    docs.push({...doc.data(),id:doc.id})
-                })
-                setdataProducto(docs)
-            })
-        }
-    })
-
-    
+  
+useEffect(()=>{
+  authSecondary.onAuthStateChanged(async user=>{
+    if (user != null){
+        await dbSecondary.collection("Usuario").doc(user.uid).get().then(async dato=>{
+          if(dato.exists){
+            db.collection('Usuario').doc(dato.data().Empresa_ID).collection('Producto').onSnapshot(querySnapshot=>{
+              const docs=[]
+              querySnapshot.forEach(doc=>{
+                  docs.push({...doc.data(),id:doc.id})
+              })
+              setdataProducto(docs)
+          })
+          }
+        })
+    }
+  })
 },[])
+
       const handleSubmit=(e)=>{
         e.preventDefault()
             if (valor.descripcionProducto != ''){
@@ -110,14 +123,21 @@ export default function FormProducto(props){
             }else{ CampoVacio()}     
       }
        const getData=(id)=>{
-           auth.onAuthStateChanged(async user=>{
-               if (user!=null){
-                const docu = await  db.collection('Usuario').doc(user.uid).collection('Producto').doc(id).get()
-            setValor({...docu.data()})   
+         authSecondary.onAuthStateChanged(async user=>{
+            if (user != null){
+                await dbSecondary.collection("Usuario").doc(user.uid).get().then(async dato=>{
+                  if(dato.exists){
+                    const docu = await  db.collection('Usuario').doc(dato.data().Empresa_ID).collection('Producto').doc(id).get()
+                    setValor({...docu.data()})   
+                  }
+                })
             }
-               
-           })
+          })
        }
+
+        
+      
+
        useEffect(()=>{
             if (props.currentId!=''){
                 getData(props.currentId)

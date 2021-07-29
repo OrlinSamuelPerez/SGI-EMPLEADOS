@@ -1,6 +1,6 @@
 import Button from '@material-ui/core/Button';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
-import {db,auth} from '../../../BD/conf';
+import {db,authSecondary, dbSecondary} from '../../../BD/conf';
 import EditIcon from '@material-ui/icons/Edit';
 import {useState, useEffect} from 'react';
 import swal from 'sweetalert';
@@ -11,20 +11,25 @@ export default function FormCategoria(props){
    }
    const [valor, setValor]= useState(valorInicial)
    const [dataCategoria, setdataCategoria]=useState([])
-   useEffect(()=>{
-    auth.onAuthStateChanged(user=>{
-        if (user!=null){
-            db.collection('Usuario').doc(user.uid).collection('Categoria').onSnapshot(querySnapshot=>{
+
+useEffect(()=>{
+    authSecondary.onAuthStateChanged(async user=>{
+      if (user != null){
+          await dbSecondary.collection("Usuario").doc(user.uid).get().then(async dato=>{
+            if(dato.exists){
+              
+              db.collection('Usuario').doc(dato.data().Empresa_ID).collection('Categoria').onSnapshot(querySnapshot=>{
                 const docs=[]
                 querySnapshot.forEach(doc=>{
                     docs.push({...doc.data(),id:doc.id})
                 })
                 setdataCategoria(docs)
-            })
-        }
-    }) 
-},[])
-
+            })  
+            }
+          })
+      }
+    })
+  },[])
    const handleChange =(e)=>{
         const {name, value}= e.target
         setValor({...valor,[name]:value})
@@ -47,13 +52,17 @@ export default function FormCategoria(props){
    }
    
    const getData=(id)=>{
-       auth.onAuthStateChanged(async user=>{
-           if (user!=null){
-            const docu = await  db.collection('Usuario').doc(user.uid).collection('Categoria').doc(id).get()
-        setValor({...docu.data()})   
+       authSecondary.onAuthStateChanged(async user=>{
+        if (user != null){
+            await dbSecondary.collection("Usuario").doc(user.uid).get().then(async dato=>{
+              if(dato.exists){
+                
+                const docu = await  db.collection('Usuario').doc(dato.data().Empresa_ID).collection('Categoria').doc(id).get()
+                setValor({...docu.data()})   
+              }
+            })
         }
-           
-       })
+      })
    }
    useEffect(()=>{
         if (props.currentId!=''){

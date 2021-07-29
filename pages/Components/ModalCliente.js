@@ -1,12 +1,16 @@
 import {useState, useEffect} from 'react';
-import {auth, db} from '../../BD/conf';
+import {authSecondary, db, dbSecondary} from '../../BD/conf';
 export default function ModalCliente(props){
     const [data, setData] =useState({})
     const [TOTAL, setTOTAL] =useState(0)
+ 
     useEffect(()=>{
-        auth.onAuthStateChanged(async user=>{
-            if(user != null ){
-               await db.collection('Usuario').doc(user.uid).collection('VentasClientes').doc(props.id).get().then(documents=>{
+        authSecondary.onAuthStateChanged(async user=>{
+          if (user != null){
+              await dbSecondary.collection("Usuario").doc(user.uid).get().then(async dato=>{
+                if(dato.exists){
+                  
+                  await db.collection('Usuario').doc(dato.data().Empresa_ID).collection('VentasClientes').doc(props.id).get().then(documents=>{
                     setData(documents.data())
                     let total = 0 
                     documents.data().productosCliente.forEach( d => {
@@ -14,9 +18,11 @@ export default function ModalCliente(props){
                     })
                     setTOTAL(total)
                })
-            }
+                }
+              })
+          }
         })
-    },[])
+      },[])
     return(
        <div>
            {

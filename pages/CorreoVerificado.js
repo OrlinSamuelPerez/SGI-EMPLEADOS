@@ -1,10 +1,10 @@
-import {auth} from '../BD/conf';
+import {authSecondary} from '../BD/conf';
 
 export default function CorreoVerificado(){
 
     const verificar =(e)=>{
         e.preventDefault()
-        const usuario = auth.currentUser
+        const usuario = authSecondary.currentUser
         usuario.sendEmailVerification()
     }    
     return(

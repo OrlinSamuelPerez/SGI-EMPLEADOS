@@ -1,11 +1,13 @@
 import Button from '@material-ui/core/Button';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
-import {db,auth} from '../../../BD/conf';
+import {db,authSecondary, dbSecondary} from '../../../BD/conf';
 import EditIcon from '@material-ui/icons/Edit';
 import {useState, useEffect} from 'react';
 import swal from 'sweetalert';
 import AddIcon from '@material-ui/icons/Add';
-import {addBDPedido} from '../../../BD/CRUD';
+import {addBDPedido} from '../../../BD/CRUD'; 
+import PaginaRestringida from "../PaginaRestringida";
+
 export default function FormCliente(props){
     let productoC={
         descripionProducto:'', 
@@ -28,22 +30,27 @@ export default function FormCliente(props){
    const [valor, setValor]= useState(valorInicial)
    const [datosproducto, setdatosProducto]= useState([])
    const [buscarProducto, setbuscarProducto]= useState([])
+   const [check, setCheck]= useState(false)
    
-      useEffect(()=>{
-        auth.onAuthStateChanged(user=>{
-            if (user!=null){
-                db.collection('Usuario').doc(user.uid).collection('Producto').onSnapshot(querySnapshot=>{
+      
+    useEffect(()=>{
+        authSecondary.onAuthStateChanged(async user=>{
+          if (user != null){
+              await dbSecondary.collection("Usuario").doc(user.uid).get().then(async dato=>{
+                if(dato.exists){
+                setCheck(dato.data().checkVentas)
+                  db.collection('Usuario').doc(dato.data().Empresa_ID).collection('Producto').onSnapshot(querySnapshot=>{
                     const docs=[]
                     querySnapshot.forEach(doc=>{
                         docs.push({...doc.data(),id:doc.id})
                     })
                     setdatosProducto(docs)
-                })
-            }
+                }) 
+                }
+              })
+          }
         })
-
-        
-    },[])
+      },[])
     const buscar=(e)=>{
         let productos= e.target.value 
         let cantidadletras=productos.length
@@ -140,7 +147,9 @@ export default function FormCliente(props){
           
     return(
         <>
-        <form  className="form-añdir">
+        {check ===  true?
+            <>
+                <form  className="form-añdir">
             <h2>Nuevo Pedido</h2>  
             <div className="Grid-form-Cliente">
                 <div>
@@ -213,6 +222,8 @@ export default function FormCliente(props){
                     )}
                    
                 </table>
+            </> :<PaginaRestringida/>
+    }
     </>
     )
 }

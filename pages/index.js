@@ -4,7 +4,7 @@ import ShowChartIcon from '@material-ui/icons/ShowChart';
 import CardResult from './Components/CardResult';
 import Actividad from './Components/Actividad';
 import {GraficaVentaSemanal} from './Components/Graficas';
-import {auth, db} from '../BD/conf';
+import {authSecondary, db, dbSecondary} from '../BD/conf';
 import {useState, useEffect} from 'react';
 export default function Home() {
   var meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"]
@@ -12,41 +12,60 @@ export default function Home() {
   var totalMes=[]
   var [mesTotal, setmesTotal]=useState([])
   const ano= fecha.getFullYear() + ''
-  
+
+
+  //ID de la empresa
+  const [empresaID, setEmpresaId] = useState("oniscnak")
+
+
   useEffect(()=>{
-    auth.onAuthStateChanged(async (user) => {
-        if(user != null){
-            meses.forEach(mes=>{
-                db.collection('Usuario').doc(user.uid).collection('VentasMes').doc(ano).collection(mes).onSnapshot(Snapshot=>{
-                    let total=0
-                    Snapshot.forEach(datoG=>{
-                        datoG.data().productosCliente.forEach(d=>{
-                            total+= d.totalUnitario
+    authSecondary.onAuthStateChanged(async user=>{
+      if (user != null){
+          await dbSecondary.collection("Usuario").doc(user.uid).get().then(async dato=>{
+            if(dato.exists){
+              
+                meses.forEach(async mes=>{
+                    await db.collection('Usuario').doc(dato.data().Empresa_ID).collection('VentasMes').doc(ano).collection(mes).onSnapshot(Snapshot=>{
+                        let total=0
+                        Snapshot.forEach(datoG=>{
+                            datoG.data().productosCliente.forEach(d=>{
+                                total+= d.totalUnitario
+                            })
                         })
+                        totalMes.push(total)
                     })
-                    totalMes.push(total)
+
                 })
-  
-            })
-        }
+                    
+                setmesTotal(totalMes)
+              
+            }
+          })
+      }
     })
-    setmesTotal(totalMes)
-  
-   },[])
+  },[])
+
+
   const [data, setData] = useState("")
   const handleActive =()=>{
     const active = document.getElementById('active-pedido');
     active.classList.toggle('active-pedido')
   }
+
   useEffect(()=>{
-    auth.onAuthStateChanged(async user=>{
-      if(user != null){
-        await db.collection('Usuario').doc(user.uid).collection('BD_Usuario').doc('datos_Usuario').get().then(doc =>{
-          setData(doc.data().nombreEmpresa)
-        })
+    authSecondary.onAuthStateChanged(async user=>{
+      if (user != null){
+          await dbSecondary.collection("Usuario").doc(user.uid).get().then(async dato=>{
+            if(dato.exists){
+              await db.collection('Usuario').doc(dato.data().Empresa_ID).collection('BD_Usuario').doc('datos_Usuario').get().then(doc =>{
+                setData(doc.data().nombreEmpresa)
+              })
+            }
+          })
       }
     })
   },[])
+ 
   const diasMes=(mes,ano)=>{
     return new Date(ano, mes, 0).getDate()
   }

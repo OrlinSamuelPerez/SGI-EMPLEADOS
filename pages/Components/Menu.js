@@ -17,22 +17,29 @@ import Button from '@material-ui/core/Button';
 import swal from 'sweetalert';
 import StorefrontIcon from '@material-ui/icons/Storefront';
 import {useState, useEffect} from 'react';
-import {auth, db} from '../../BD/conf';
+import {authSecondary, db, dbSecondary} from '../../BD/conf';
 export default function Menu({children}) {
   const [data, setData] = useState("")
   const handleActive =()=>{
     const active = document.getElementById('active-pedido');
     active.classList.toggle('active-pedido')
   }
+
   useEffect(()=>{
-    auth.onAuthStateChanged(async user=>{
-      if(user != null){
-        await db.collection('Usuario').doc(user.uid).collection('BD_Usuario').doc('datos_Usuario').get().then(doc =>{
-          setData(doc.data().nombreEmpresa)
-        })
+    authSecondary.onAuthStateChanged(async user=>{
+      if (user != null){
+          await dbSecondary.collection("Usuario").doc(user.uid).get().then(async dato=>{
+            if(dato.exists){
+              
+              await db.collection('Usuario').doc(dato.data().Empresa_ID).collection('BD_Usuario').doc('datos_Usuario').get().then(doc =>{
+                setData(doc.data().nombreEmpresa)
+              })
+            }
+          })
       }
     })
   },[])
+
   const handleActiveMenu = ()=>{
     const active = document.getElementById('sub-navbar');
     active.classList.toggle('sub-navbar-active')
@@ -47,7 +54,7 @@ export default function Menu({children}) {
     })
     .then((willDelete) => {
       if (willDelete) {
-        auth.signOut().then(console.log(""));
+        authSecondary.signOut().then(console.log(""));
       } else {
         console.log('close');
       }
@@ -70,17 +77,18 @@ export default function Menu({children}) {
             <li onClick={handleActive}><Link href="/Pedido/Clientes"><a className="icon-11"> <ShoppingCartIcon />Ventas a Clientes</a></Link></li>
           </div>
           <li><Link href="/Estadisticas"><a className="icon-5"> <ShowChartIcon /> Estadisticas</a></Link></li>
-          {/*<li><Link href="/Chats"><a className="icon-6"> <SmsIcon /> Chats</a></Link></li>*/}
+          {/*<li><Link href="/Chats"><a className="icon-6"> <SmsIcon /> Chats</a></Link></li>
           <li><Link href="/Admin"><a className="icon-7"> <SupervisorAccountIcon /> Adiministrador</a></Link></li>
           <li><Link href="/Configuracion"><a className="icon-8"> <SettingsIcon /> Configuracion</a></Link></li>
+            */}
         </ul>
         <nav className="navBar" >
           <h1><InsertChartIcon/> Sistema de inventario</h1>
           <ul>
             <li>
-            <Badge badgeContent={4}  color="secondary" >
+           {/* <Badge badgeContent={4}  color="secondary" >
               <NotificationsActiveIcon style={{color:'white'}} />
-            </Badge>
+          </Badge>*/}
             </li>
             <li className="avatar" onClick={handleActiveMenu} ><Avatar>{data.substring(0,1)}</Avatar></li>
           </ul>
@@ -88,10 +96,10 @@ export default function Menu({children}) {
       <div className="sub-navbar" id="sub-navbar">
         <span>{data}</span>
         <hr></hr>
-        <ul>
+     <ul>
           <li onClick={handleActiveMenu} ><Link href="/Admin"><a > <SupervisorAccountIcon /> Adiministrador</a></Link></li>
           <li onClick={handleActiveMenu} ><Link href="/Configuracion"><a> <SettingsIcon /> Configuracion</a></Link></li>
-        </ul>
+      </ul>
         <Button onClick={close} variant="outlined" color="primary" style={{borderRadius:'22px'}} >
           cerrar seccion
         </Button>

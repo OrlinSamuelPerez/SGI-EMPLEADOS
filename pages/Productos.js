@@ -1,14 +1,16 @@
 import ContainerForm from "./Components/Forms/ContainerForm";
 import FormProducto from "./Components/Forms/FormProducto";
-import {auth,db} from "../BD/conf"
+import {authSecondary,db, dbSecondary} from "../BD/conf"
 import {addBD, deleteBD} from '../BD/CRUD';
 import {useState, useEffect} from 'react';
 import DeleteIcon from '@material-ui/icons/Delete';
 import UpdateIcon from '@material-ui/icons/Edit';
-
+import PaginaRestringida from "./Components/PaginaRestringida"
 export default function Productos(){
     const [currentId,setcurrentId]=useState('')
     const [datos,setDatos]=useState([])
+    const [check, setCheck]= useState(false)
+
     const addProducto=(objeto)=>{
         addBD(currentId,'Producto',objeto)
     }
@@ -16,23 +18,28 @@ export default function Productos(){
         deleteBD('Producto',id,{Descripcion,categoriaP,proveedorP,precioC,precioV,cantidadE,salidaP,existencia})
     }
     useEffect(()=>{
-        auth.onAuthStateChanged(user=>{
-            if (user!=null){
-                db.collection('Usuario').doc(user.uid).collection('Producto').onSnapshot(querySnapshot=>{
+        authSecondary.onAuthStateChanged(async user=>{
+          if (user != null){
+              await dbSecondary.collection("Usuario").doc(user.uid).get().then(async dato=>{
+                if(dato.exists){
+                    setCheck(dato.data().checkManeteminento)
+                  db.collection('Usuario').doc(dato.data().Empresa_ID).collection('Producto').onSnapshot(querySnapshot=>{
                     const docs=[]
                     querySnapshot.forEach(doc=>{
                         docs.push({...doc.data(),id:doc.id})
                     })
                     setDatos(docs)
                 })
-            }
+                }
+              })
+          }
         })
-
-        
-    },[])
+      },[])
 return (
     <main>
-        <section className="form-table producto">
+        {check === true?
+            <>
+                <section className="form-table producto">
         <ContainerForm>
          <FormProducto addProducto={addProducto} currentId={currentId}/>
     </ContainerForm> 
@@ -115,7 +122,9 @@ return (
 </table>
 
         </section>
-    
+ 
+            </>   : <PaginaRestringida/> 
+    }   
     </main>
 )
 }

@@ -1,24 +1,28 @@
 import { Divider } from "@material-ui/core";
-import {auth, db} from '../../BD/conf';
+import {authSecondary, db, dbSecondary} from '../../BD/conf';
 import {useState, useEffect} from "react";
 const fecha =  new Date();
 const meses  = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"]
 export default function Actividad(){
     const [state, setState] = useState([])
-    useEffect(async ()=>{
-        auth.onAuthStateChanged(async user=>{
-            if(auth != null){
-                await db.collection('Usuario').doc(user.uid).collection('Actividades').onSnapshot(data=>{
+    
+    useEffect(()=>{
+        authSecondary.onAuthStateChanged(async user=>{
+          if (user != null){
+              await dbSecondary.collection("Usuario").doc(user.uid).get().then(async dato=>{
+                if(dato.exists){
+                  await db.collection('Usuario').doc(dato.data().Empresa_ID).collection('Actividades').onSnapshot(data=>{
                     const DATOS = []
                     data.forEach(d=>{
                         DATOS.push({...d.data(),id:d.id})
                     })
                     setState(DATOS)
                 })
-    
-            }
+                }
+              })
+          }
         })
-    },[])
+      },[])
     return(
         <article className="Actividades-main">
             <div>

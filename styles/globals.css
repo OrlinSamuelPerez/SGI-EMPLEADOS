@@ -748,3 +748,10 @@ hr{
 .actividades div{
  margin-bottom:5px;
 }
+.acceso-denegado{
+  width:400px;
+  margin-left:auto;
+  margin-right: auto;
+  text-align: center;
+  
+}

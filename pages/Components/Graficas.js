@@ -1,19 +1,23 @@
 import { Bar } from 'react-chartjs-2';
-import {auth,db} from "../../BD/conf";
+import {authSecondary,db, dbSecondary} from "../../BD/conf";
 import {useState, useEffect} from 'react';
 
 export function GraficaVentaSemanal(){
   var meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"]
-const fecha= new Date()
-var totalMes=[]
-var [mesTotal, setmesTotal]=useState([])
-const ano= fecha.getFullYear() + ''
+  const fecha= new Date()
+  var totalMes=[]
+  var [mesTotal, setmesTotal]=useState([])
+  const ano= fecha.getFullYear() + ''
 
-useEffect(()=>{
-  auth.onAuthStateChanged(async (user) => {
-      if(user != null){
-          meses.forEach(mes=>{
-              db.collection('Usuario').doc(user.uid).collection('VentasMes').doc(ano).collection(mes).onSnapshot(Snapshot=>{
+
+ useEffect(()=>{
+  authSecondary.onAuthStateChanged(async user=>{
+    if (user != null){
+        await dbSecondary.collection("Usuario").doc(user.uid).get().then(async dato=>{
+          if(dato.exists){
+            
+            meses.forEach(mes=>{
+              db.collection('Usuario').doc(dato.data().Empresa_ID).collection('VentasMes').doc(ano).collection(mes).onSnapshot(Snapshot=>{
                   let total=0
                   Snapshot.forEach(datoG=>{
                       datoG.data().productosCliente.forEach(d=>{
@@ -24,11 +28,12 @@ useEffect(()=>{
               })
 
           })
-      }
+          }
+        })
+        setmesTotal(totalMes)
+    }
   })
-  setmesTotal(totalMes)
-
- },[])
+},[])
 const data={
   labels:meses,
   datasets:[{
