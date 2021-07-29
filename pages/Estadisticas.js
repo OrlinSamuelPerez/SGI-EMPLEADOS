@@ -8,6 +8,8 @@ import CallReceivedIcon from '@material-ui/icons/CallReceived';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import WarningIcon from '@material-ui/icons/Warning';
 import DomainIcon from '@material-ui/icons/Domain';
+import PaginaRestringida from "../Components/PaginaRestringida";
+
 export default function Estadisticas(){
     const valuesProductosMasVendidos={ 
         descripcionP1:'',
@@ -279,7 +281,7 @@ export default function Estadisticas(){
                          <ButtonEstad color="color4" Icon={<WarningIcon/>} click={()=> setOpen3(true)}title="Productos Agotados " descripcion="Los productos con menos de 25 existencia "  />
                     </div>
                 </div>
-                </>:<h1>Aqui va el restrigido</h1>
+                </>:<PaginaRestringida/>
         :<h1 className="title-estadistica" >NO HAY SUFICIENTES PRODUCTOS REGISTRADOS PARA GENERAR UN INFORME</h1>
     }
             <Modal
