@@ -48,7 +48,7 @@ export default function ModalCliente(props){
                </div>
                <table>
                    <tr>
-                       <th>Descripcion Producto</th>
+                       <th>Descripcion Producto</th> 
                        <th>Precio Unitario</th>
                        <th>Unidades</th>
                        <th>Total</th>

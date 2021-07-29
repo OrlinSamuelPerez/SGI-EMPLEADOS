@@ -2,10 +2,10 @@ import {useState, useEffect} from 'react';
 import {authSecondary, db, dbSecondary} from '../../BD/conf';
 import TrendingFlatIcon from '@material-ui/icons/TrendingFlat';
 import Modal from '@material-ui/core/Modal'; 
-import ModalCliente from '../Components/ModalCliente';
+import ModalCliente from '../../Components/ModalCliente';
 import Link from 'next/link';
-import Actividad from '../Components/Actividad';
-import PaginaRestringida from "../Components/PaginaRestringida";
+import Actividad from '../../Components/Actividad';
+import PaginaRestringida from "../../Components/PaginaRestringida";
 
 export default function ListaVenta(){
     const [data, setData] = useState([])
