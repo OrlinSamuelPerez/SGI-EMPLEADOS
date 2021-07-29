@@ -1,6 +1,6 @@
 import Button from '@material-ui/core/Button';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
-import {db,authSecondary, dbSecondary} from '../../../BD/conf';
+import {db,authSecondary, dbSecondary} from '../../BD/conf';
 import EditIcon from '@material-ui/icons/Edit';
 import {useState, useEffect} from 'react';
 import swal from 'sweetalert';
@@ -8,7 +8,7 @@ import swal from 'sweetalert';
 export default function FormCategoria(props){
    const valorInicial={
     descripcionCategoria:''
-   }
+   } 
    const [valor, setValor]= useState(valorInicial)
    const [dataCategoria, setdataCategoria]=useState([])
 

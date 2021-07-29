@@ -13,7 +13,7 @@ export default function Login(){
         authSecondary.signInWithEmailAndPassword(correoUsuario, claveUsuario)
 
 
-    }
+    } 
     return(
         <main className={style.gridLogin}>
             <div>

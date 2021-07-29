@@ -1,5 +1,5 @@
 import { Bar } from 'react-chartjs-2';
-import {authSecondary,db, dbSecondary} from "../../BD/conf";
+import {authSecondary,db, dbSecondary} from "../BD/conf";
 import {useState, useEffect} from 'react';
 
 export function GraficaVentaSemanal(){
@@ -9,7 +9,7 @@ export function GraficaVentaSemanal(){
   var [mesTotal, setmesTotal]=useState([])
   const ano= fecha.getFullYear() + ''
 
-
+ 
  useEffect(()=>{
   authSecondary.onAuthStateChanged(async user=>{
     if (user != null){

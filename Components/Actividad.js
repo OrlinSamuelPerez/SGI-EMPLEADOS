@@ -1,5 +1,5 @@
 import { Divider } from "@material-ui/core";
-import {authSecondary, db, dbSecondary} from '../../BD/conf';
+import {authSecondary, db, dbSecondary} from '../BD/conf';
 import {useState, useEffect} from "react";
 const fecha =  new Date();
 const meses  = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"]
@@ -20,7 +20,7 @@ export default function Actividad(){
                 })
                 }
               })
-          }
+          } 
         })
       },[])
     return(

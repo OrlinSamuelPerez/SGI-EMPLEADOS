@@ -11,4 +11,4 @@ export default function PaginaRestringida(){
             </div>
         </div>
     )
-}
+} 

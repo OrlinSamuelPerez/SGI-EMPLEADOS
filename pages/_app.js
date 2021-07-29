@@ -3,14 +3,14 @@ import {authSecondary} from "../BD/conf";
 import Head from "next/head";
 import { useState } from "react";
 import Login from "./Login";
-import Menu from "./Components/Menu"
+import Menu from "../Components/Menu"
  function MyApp({ Component, pageProps }) {
   const [userName, setuserName] = useState(null);
   return (
     <>
       <Head>
         <title>Sistema de Gestion de Inventario</title>
-      </Head>
+      </Head> 
       {authSecondary.onAuthStateChanged((user) => 
           setuserName(user)
         )

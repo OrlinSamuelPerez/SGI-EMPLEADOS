@@ -1,11 +1,11 @@
-import ContainerForm from "./Components/Forms/ContainerForm";
-import FormProducto from "./Components/Forms/FormProducto";
+import ContainerForm from "../Components/Forms/ContainerForm";
+import FormProducto from "../Components/Forms/FormProducto";
 import {authSecondary,db, dbSecondary} from "../BD/conf"
 import {addBD, deleteBD} from '../BD/CRUD';
 import {useState, useEffect} from 'react';
 import DeleteIcon from '@material-ui/icons/Delete';
 import UpdateIcon from '@material-ui/icons/Edit';
-import PaginaRestringida from "./Components/PaginaRestringida"
+import PaginaRestringida from "../Components/PaginaRestringida"
 export default function Productos(){
     const [currentId,setcurrentId]=useState('')
     const [datos,setDatos]=useState([])
@@ -13,7 +13,7 @@ export default function Productos(){
 
     const addProducto=(objeto)=>{
         addBD(currentId,'Producto',objeto)
-    }
+    } 
     const deleteProducto=(id,Descripcion,categoriaP,proveedorP,precioC,precioV,cantidadE,salidaP,existencia)=>{
         deleteBD('Producto',id,{Descripcion,categoriaP,proveedorP,precioC,precioV,cantidadE,salidaP,existencia})
     }

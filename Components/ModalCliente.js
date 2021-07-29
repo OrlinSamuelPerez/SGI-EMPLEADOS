@@ -1,9 +1,9 @@
 import {useState, useEffect} from 'react';
-import {authSecondary, db, dbSecondary} from '../../BD/conf';
+import {authSecondary, db, dbSecondary} from '../BD/conf';
 export default function ModalCliente(props){
     const [data, setData] =useState({})
     const [TOTAL, setTOTAL] =useState(0)
- 
+  
     useEffect(()=>{
         authSecondary.onAuthStateChanged(async user=>{
           if (user != null){

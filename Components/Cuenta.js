@@ -1,6 +1,6 @@
 import Avatar from '@material-ui/core/Avatar';
 import {useState, useEffect} from 'react';
-import {authSecondary, db, dbSecondary} from '../../BD/conf';
+import {authSecondary, db, dbSecondary} from '../BD/conf';
 
 export default function Cuenta(){
     const [data, setData] = useState("")
@@ -13,7 +13,7 @@ export default function Cuenta(){
                   setData(doc.data().nombreEmpresa)
                 })
               }
-            })
+            }) 
         }
       })
     },[])

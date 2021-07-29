@@ -1,6 +1,6 @@
 import Button from '@material-ui/core/Button';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
-import {db,authSecondary, dbSecondary} from '../../../BD/conf';
+import {db,authSecondary, dbSecondary} from '../../BD/conf';
 import Link from "next/link";
 import EditIcon from '@material-ui/icons/Edit';
 import {useState, useEffect} from 'react';
@@ -128,7 +128,7 @@ useEffect(()=>{
                 await dbSecondary.collection("Usuario").doc(user.uid).get().then(async dato=>{
                   if(dato.exists){
                     const docu = await  db.collection('Usuario').doc(dato.data().Empresa_ID).collection('Producto').doc(id).get()
-                    setValor({...docu.data()})   
+                     setValor({...docu.data()})   
                   }
                 })
             }

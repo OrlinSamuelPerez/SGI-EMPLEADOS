@@ -1,9 +1,9 @@
 import Button from '@material-ui/core/Button';
 import Link from 'next/link';
 import ShowChartIcon from '@material-ui/icons/ShowChart';
-import CardResult from './Components/CardResult';
-import Actividad from './Components/Actividad';
-import {GraficaVentaSemanal} from './Components/Graficas';
+import CardResult from '../Components/CardResult';
+import Actividad from '../Components/Actividad';
+import {GraficaVentaSemanal} from '../Components/Graficas';
 import {authSecondary, db, dbSecondary} from '../BD/conf';
 import {useState, useEffect} from 'react';
 export default function Home() {
@@ -68,7 +68,7 @@ export default function Home() {
  
   const diasMes=(mes,ano)=>{
     return new Date(ano, mes, 0).getDate()
-  }
+  } 
   var dias = diasMes(fecha.getMonth()+1,fecha.getFullYear())
   var venta = mesTotal[fecha.getMonth()]
  var resultado=venta/(7*100)

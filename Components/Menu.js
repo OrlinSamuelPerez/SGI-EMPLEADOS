@@ -17,7 +17,7 @@ import Button from '@material-ui/core/Button';
 import swal from 'sweetalert';
 import StorefrontIcon from '@material-ui/icons/Storefront';
 import {useState, useEffect} from 'react';
-import {authSecondary, db, dbSecondary} from '../../BD/conf';
+import {authSecondary, db, dbSecondary} from '../BD/conf';
 export default function Menu({children}) {
   const [data, setData] = useState("")
   const handleActive =()=>{
@@ -80,7 +80,7 @@ export default function Menu({children}) {
           {/*<li><Link href="/Chats"><a className="icon-6"> <SmsIcon /> Chats</a></Link></li>
           <li><Link href="/Admin"><a className="icon-7"> <SupervisorAccountIcon /> Adiministrador</a></Link></li>
           <li><Link href="/Configuracion"><a className="icon-8"> <SettingsIcon /> Configuracion</a></Link></li>
-            */}
+            */} 
         </ul>
         <nav className="navBar" >
           <h1><InsertChartIcon/> Sistema de inventario</h1>

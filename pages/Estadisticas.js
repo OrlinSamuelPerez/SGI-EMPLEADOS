@@ -2,7 +2,7 @@ import { Bar,Pie, Line } from 'react-chartjs-2';
 import Modal from '@material-ui/core/Modal';
 import {authSecondary,db, dbSecondary} from "../BD/conf";
 import {useState, useEffect} from 'react';
-import ButtonEstad from './Components/ButtonEstad';
+import ButtonEstad from '../Components/ButtonEstad';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import CallReceivedIcon from '@material-ui/icons/CallReceived';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
@@ -276,7 +276,7 @@ export default function Estadisticas(){
                         <ButtonEstad color="color3" Icon={<AttachMoneyIcon/>} click={()=> setOpen4(true)}title="Ganancias Mensuales $" descripcion="Estadistica de las ganacias mensuales de tu negocio"  />
                     </div>
                     <div>
-                        <ButtonEstad color="color4" Icon={<WarningIcon/>} click={()=> setOpen3(true)}title="Productos Agotados " descripcion="Los productos con menos de 25 existencia "  />
+                         <ButtonEstad color="color4" Icon={<WarningIcon/>} click={()=> setOpen3(true)}title="Productos Agotados " descripcion="Los productos con menos de 25 existencia "  />
                     </div>
                 </div>
                 </>:<h1>Aqui va el restrigido</h1>

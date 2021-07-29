@@ -1,11 +1,11 @@
-import ContainerForm from "./Components/Forms/ContainerForm";
-import FormProveedor from "./Components/Forms/FormProveedor";
+import ContainerForm from "../Components/Forms/ContainerForm";
+import FormProveedor from "../Components/Forms/FormProveedor";
 import {authSecondary,db, dbSecondary} from "../BD/conf"
 import {addBD, deleteBD} from '../BD/CRUD';
 import {useState, useEffect} from 'react';
 import DeleteIcon from '@material-ui/icons/Delete';
 import UpdateIcon from '@material-ui/icons/Edit';
-import PaginaRestringida from "./Components/PaginaRestringida";
+import PaginaRestringida from "../Components/PaginaRestringida";
 
 export default function Proveedor(){
     const [currentId,setcurrentId]=useState('')
@@ -14,7 +14,7 @@ export default function Proveedor(){
 
     const addProveedor=(objeto)=>{
         addBD(currentId,'Proveedor',objeto)
-    }
+    } 
     const deleteProveedor=(id,nombre,correo,telefono,direccion)=>{
         deleteBD('Proveedor',id,{nombre,correo,telefono,direccion})
     } 

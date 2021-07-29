@@ -1,11 +1,11 @@
-import ContainerForm from "./Components/Forms/ContainerForm";
-import FormCategoria from "./Components/Forms/FormCategoria";
+import ContainerForm from "../Components/Forms/ContainerForm";
+import FormCategoria from "../Components/Forms/FormCategoria";
 import {authSecondary,db, dbSecondary} from "../BD/conf"
 import {addBD, deleteBD} from '../BD/CRUD';
 import {useState, useEffect} from 'react';
 import DeleteIcon from '@material-ui/icons/Delete';
 import UpdateIcon from '@material-ui/icons/Edit';
-import PaginaRestringida from "./Components/PaginaRestringida";
+import PaginaRestringida from "../Components/PaginaRestringida";
 
 export default function Categoria(){
     const [currentId,setcurrentId]=useState('')
@@ -18,7 +18,7 @@ export default function Categoria(){
     const deleteCategoria=(id,Descripcion)=>{
         deleteBD('Categoria',id,{Descripcion})
     } 
-
+ 
   
       useEffect(()=>{
         authSecondary.onAuthStateChanged(async user=>{
